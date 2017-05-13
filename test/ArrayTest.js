@@ -41,6 +41,15 @@ describe('Test array functionality', () => {
     var original = generateValues(FROM, TO);
     expect(original.map(originalMapSpy)).toEqual(this.stateLog.proxy.map(proxylMapSpy));
   });
+
+  it('The map function should work, even with push', () => {
+    var originalMapSpy = jasmine.createSpy().and.returnValue(true);
+    var proxylMapSpy = jasmine.createSpy().and.returnValue(true);
+    var original = generateValues(FROM, TO + 1);
+    this.stateLog.proxy.push(generateValue(TO));
+
+    expect(original.map(originalMapSpy)).toEqual(this.stateLog.proxy.map(proxylMapSpy));
+  });
 });
 
 function generateValues(from, to) {

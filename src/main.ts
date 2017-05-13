@@ -6,7 +6,7 @@ class StateLog {
   constructor(target: any) {
     this._callbacks = [];
     if(Array.isArray) {
-      this.proxy = new (<any>window).Proxy([], new ArrayTracker(target, this._trigger.bind(this)));
+      this.proxy = new (<any>window).Proxy(target, new ArrayTracker(target, this._trigger.bind(this)));
     } else {
       throw new Error('Only arrays are implemented yet');
     }

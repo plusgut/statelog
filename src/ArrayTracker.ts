@@ -24,7 +24,7 @@ class ArrayTracker {
     if(property === 'push') {
       return this._push.bind(this);
     } else if(property === 'map') {
-      return this._map.bind(this);
+      return Array.prototype.map.bind(receiver);
     }
 
     return this._target[property];
@@ -37,13 +37,6 @@ class ArrayTracker {
     var result = this._target.push.apply(this._target, pushes);
     this._callback(this, "");
 
-    return result;
-  }
-  _map(callback: (entity: any, index: number, self: any) => any) {
-    var result = [];
-    for(var i = 0; i < this._target.length; i++) {
-      result.push(callback(this._target[i], i, this));
-    }
     return result;
   }
   _pop() {
