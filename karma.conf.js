@@ -85,6 +85,9 @@ module.exports = function (config) {
 
   if (process.env.TRAVIS) {
     configuration.customLaunchers.Chrome_Headless.flags.push('--no-sandbox');
+    console.log('TRAVIS!!!', configuration);
+  } else {
+    console.log('no travis deteced');
   }
 
   config.set(configuration);
