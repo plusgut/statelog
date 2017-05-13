@@ -1,0 +1,25 @@
+language: node_js
+
+node_js:
+  - "5"
+
+before_install:
+  - "npm config set spin false"
+  - "npm --version"
+  - "npm install gulp -g"
+  - "phantomjs --version"
+  - "rm -f /tmp/*.dmp"
+
+install:
+  - "npm install"
+  - "gulp default"
+
+after_success:
+  - "gulp coveralls"
+
+notifications:
+  email:
+    recipients:
+      - travis@snew.io
+    on_success: change
+    on_failure: always
