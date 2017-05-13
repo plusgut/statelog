@@ -56,7 +56,7 @@ module.exports = function (config) {
     customLaunchers: {
       Chrome_Headless: {
         base: 'Chrome',
-        flags: ['--headless']
+        flags: ['--disable-gpu','--headless ', ' --remote-debugging-port=9222']
       }
     },
     // Continuous Integration mode
