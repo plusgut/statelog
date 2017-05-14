@@ -24,20 +24,43 @@ class ArrayTracker {
     switch(property) {
       case 'push': 
         return this._push.bind(this);
+      case 'unshift': 
+        return this._unshift.bind(this);
       default:
-        return this._target[property];
+        if(this._target.hasOwnProperty(property)) {
+          // @TODO add proxy for nesting
+          // @TODO add caching
+          return this._target[property];
+        } else {
+          return this._target[property];
+        }
     }
   }
 
-  _push(...pushes: Array<any>) {
-    for(var i = 0; i < pushes.length; i++) {
+  set() {
+    throw new Error('Setting values is not yet possible');
+  }
+
+  _push(...enities: Array<any>) {
+    for(var i = 0; i < enities.length; i++) {
       this._shell.push(++this._idIncrement);
     }
-    var result = this._target.push.apply(this._target, pushes);
+    var result = this._target.push.apply(this._target, enities);
     this._callback(this, "");
 
     return result;
   }
+
+  _unshift(...enities: Array<any>) {
+    for(var i = 0; i < enities.length; i++) {
+      this._shell.unshift(++this._idIncrement);
+    }
+    var result = this._target.unshift.apply(this._target, enities);
+    this._callback(this, "");
+
+    return result;
+  }
+
   _pop() {
 
   }

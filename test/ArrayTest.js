@@ -4,7 +4,6 @@ const FROM = 0;
 const TO   = 3;
 
 describe('Test array functionality', () => {
-
   beforeEach(() => {
     this.changeSpyFirst  = jasmine.createSpy();
     this.changeSpySecond = jasmine.createSpy();
@@ -30,10 +29,23 @@ describe('Test array functionality', () => {
     expect(this.stateLog.proxy).toEqual(generateValues(FROM, TO).concat([generateValue(TO)]));
   });
 
-  it('The should be single multiple pushable', () => {
+  it('The should be multiple pushable', () => {
     expect(this.stateLog.proxy.push(generateValue(TO), generateValue(TO + 1))).toEqual(TO + 2);
     expect(this.stateLog.proxy).toEqual(generateValues(FROM, TO + 2));
   });
+
+  it('The should be single unshiftable', () => {
+    expect(this.stateLog.proxy.unshift(generateValue(TO))).toEqual(TO + 1);
+    expect(this.changeSpyFirst.calls.count()).toEqual(1);
+    expect(this.changeSpySecond.calls.count()).toEqual(1);
+    expect(this.stateLog.proxy).toEqual([generateValue(TO)].concat(generateValues(FROM, TO)));
+  });
+
+  it('The should be single multiple unshiftable', () => {
+    expect(this.stateLog.proxy.unshift(generateValue(TO), generateValue(TO + 1))).toEqual(TO + 2);
+    expect(this.stateLog.proxy).toEqual(generateValues(TO, TO + 2).concat(generateValues(FROM, TO)));
+  });
+
 
   it('The map function should work', () => {
     var originalMapSpy = jasmine.createSpy().and.returnValue(true);
