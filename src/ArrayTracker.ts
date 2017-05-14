@@ -21,13 +21,12 @@ class ArrayTracker {
   }
 
   get(target: any, property: string, receiver: any) {
-    if(property === 'push') {
-      return this._push.bind(this);
-    } else if(property === 'map') {
-      return Array.prototype.map.bind(receiver);
+    switch(property) {
+      case 'push': 
+        return this._push.bind(this);
+      default:
+        return this._target[property];
     }
-
-    return this._target[property];
   }
 
   _push(...pushes: Array<any>) {
