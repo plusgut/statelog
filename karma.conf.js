@@ -16,7 +16,6 @@ module.exports = function (config) {
     // list of files / patterns to load in the browser
     files: [
       { pattern: 'src/**/*.ts' },
-      'node_modules/tempart/dist/tempart.min.js',
       'test/**/*Test.js',
     ],
 
@@ -56,7 +55,7 @@ module.exports = function (config) {
     customLaunchers: {
       Chrome_Headless: {
         base: 'Chrome',
-        flags: ['--disable-gpu','--headless ', ' --remote-debugging-port=9222']
+        flags: ['--disable-gpu','--headless ', '--remote-debugging-port=9222']
       }
     },
     // Continuous Integration mode
@@ -85,9 +84,6 @@ module.exports = function (config) {
 
   if (process.env.TRAVIS) {
     configuration.customLaunchers.Chrome_Headless.flags.push('--no-sandbox');
-    console.log('TRAVIS!!!', configuration);
-  } else {
-    console.log('no travis deteced');
   }
 
   config.set(configuration);
