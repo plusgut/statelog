@@ -9,6 +9,7 @@ before_install:
   - "npm install gulp -g"
   - "phantomjs --version"
   - "rm -f /tmp/*.dmp"
+  - "google-chrome --version""
 
 install:
   - "npm install"
