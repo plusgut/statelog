@@ -1,4 +1,4 @@
-/* global jasmine, describe, it, beforeEach, expect, StateLog */
+/* global jasmine, describe, it, beforeEach, expect, StateLog, window */
 
 const FROM = 0;
 const TO   = 3;
@@ -15,7 +15,6 @@ describe('Test array functionality', () => {
     this.setSpySecond     = jasmine.createSpy();
 
     this.stateLog = new StateLog(generateValues(FROM, TO));
-    window.stateLog = this.stateLog;
     this.stateLog.on('push',    this.pushSpyFirst);
     this.stateLog.on('push',    this.pushSpySecond);
     this.stateLog.on('unshift', this.unshiftSpyFirst);
@@ -24,6 +23,8 @@ describe('Test array functionality', () => {
     this.stateLog.on('remove',  this.removeSpySecond);
     this.stateLog.on('set',     this.setSpyFirst);
     this.stateLog.on('set',     this.setSpySecond);
+
+    window.stateLog = this.stateLog;
 
     this.checkEvents = (opt) => {
       expect(this.pushSpyFirst.calls.count()).toEqual(opt.push);
