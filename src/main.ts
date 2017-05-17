@@ -1,22 +1,31 @@
+type Callback = () => void
+
 import ArrayTracker from './ArrayTracker';
 
 class StateLog {
-  proxy: ArrayTracker
-  _callbacks: Array<(handler: ArrayTracker, property: string) => void>
+  proxyHandler: ArrayTracker
+  proxy: any
+  _callbacks: {callback: Callback, type: string}[]
+
   constructor(target: any) {
     this._callbacks = [];
     if(Array.isArray) {
-      this.proxy = new (<any>window).Proxy(target, new ArrayTracker(target, this._trigger.bind(this)));
+      this.proxyHandler =  new ArrayTracker(target, this._trigger.bind(this));
+      this.proxy = new (<any>window).Proxy(target, this.proxyHandler);
     } else {
       throw new Error('Only arrays are implemented yet');
     }
   }
-  on(callback: (handler: ArrayTracker, property: string) => void) {
-    this._callbacks.push(callback);
+
+  on(type: string, callback: Callback) {
+    this._callbacks.push({type, callback});
   }
-  _trigger(arrayTracker: ArrayTracker, property: string) {
+
+  _trigger(type: string, arrayTracker: ArrayTracker) {
     for(var i = 0; i < this._callbacks.length; i++) {
-      this._callbacks[i](arrayTracker, property);
+      if(type === this._callbacks[i].type) {
+        this._callbacks[i].callback();
+      }
     }
   }
 }

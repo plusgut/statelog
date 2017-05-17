@@ -3,9 +3,9 @@ class ArrayTracker {
   _target: any
   _shell: Array<number>
   _changes: any
-  _callback: (handler: ArrayTracker, property: string) => void
+  _callback: (type: string, handler: ArrayTracker) => void
 
-  constructor(target: Array<any>, callback: (handler: ArrayTracker, property: string) => void) {
+  constructor(target: Array<any>, callback: (type: string, handler: ArrayTracker) => void) {
     this._target = target;
     this._callback = callback;
     this._shell = [];
@@ -20,7 +20,7 @@ class ArrayTracker {
     this._changes = {};
   }
 
-  get(target: any, property: string, receiver: any) {
+  get(target: any, property: string, proxy: any) {
     switch(property) {
       case 'push': 
         return this._push.bind(this);
@@ -46,7 +46,7 @@ class ArrayTracker {
       this._shell.push(++this._idIncrement);
     }
     var result = this._target.push.apply(this._target, enities);
-    this._callback(this, "");
+    this._callback('push', this);
 
     return result;
   }
@@ -56,12 +56,16 @@ class ArrayTracker {
       this._shell.unshift(++this._idIncrement);
     }
     var result = this._target.unshift.apply(this._target, enities);
-    this._callback(this, "");
+    this._callback("unshift", this);
 
     return result;
   }
 
   _pop() {
+
+  }
+
+  _addChanges(type: string) {
 
   }
 }
