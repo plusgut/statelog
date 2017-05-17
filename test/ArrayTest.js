@@ -108,6 +108,8 @@ describe('Test array functionality', () => {
       remove: 0,
       set: 0,
     });
+    expect(this.pushSpyFirst).toHaveBeenCalledWith([TO + 1], this.stateLog.proxyHandler);
+    expect(this.pushSpyFirst).not.toHaveBeenCalledWith([TO + 2], this.stateLog.proxyHandler);
 
     this.stateLog.proxy.push("bar");
     this.checkEvents({
@@ -116,10 +118,28 @@ describe('Test array functionality', () => {
       remove: 0,
       set: 0,
     });
+    expect(this.pushSpyFirst).toHaveBeenCalledWith([TO + 2], this.stateLog.proxyHandler);
   });
 
   it("unshift event gets called", () => {
+    this.stateLog.proxy.unshift("foo");
+    this.checkEvents({
+      push: 0,
+      unshift: 1,
+      remove: 0,
+      set: 0,
+    });
+    expect(this.unshiftSpyFirst).toHaveBeenCalledWith([TO + 1], this.stateLog.proxyHandler);
+    expect(this.unshiftSpyFirst).not.toHaveBeenCalledWith([TO + 2], this.stateLog.proxyHandler);
 
+    this.stateLog.proxy.unshift("bar");
+    this.checkEvents({
+      push: 0,
+      unshift: 2,
+      remove: 0,
+      set: 0,
+    });
+    expect(this.unshiftSpyFirst).toHaveBeenCalledWith([TO + 2], this.stateLog.proxyHandler);
   });
 
   it("remove event gets called", () => {

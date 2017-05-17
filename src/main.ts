@@ -1,4 +1,4 @@
-type Callback = () => void
+type Callback = (changedIds: Array<number>, arrayTracker: ArrayTracker) => void
 
 import ArrayTracker from './ArrayTracker';
 
@@ -21,10 +21,10 @@ class StateLog {
     this._callbacks.push({type, callback});
   }
 
-  _trigger(type: string, arrayTracker: ArrayTracker) {
+  _trigger(type: string, changedIds:number[], arrayTracker: ArrayTracker) {
     for(var i = 0; i < this._callbacks.length; i++) {
       if(type === this._callbacks[i].type) {
-        this._callbacks[i].callback();
+        this._callbacks[i].callback(changedIds, arrayTracker);
       }
     }
   }

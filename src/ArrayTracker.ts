@@ -1,11 +1,13 @@
+type Callback = (type: string, changedIds: number[], arrayTracker: ArrayTracker) => void
+
 class ArrayTracker {
   _idIncrement: number
   _target: any
   _shell: Array<number>
   _changes: any
-  _callback: (type: string, handler: ArrayTracker) => void
+  _callback: Callback
 
-  constructor(target: Array<any>, callback: (type: string, handler: ArrayTracker) => void) {
+  constructor(target: any[], callback: Callback) {
     this._target = target;
     this._callback = callback;
     this._shell = [];
@@ -41,22 +43,26 @@ class ArrayTracker {
     throw new Error('Setting values is not yet possible');
   }
 
-  _push(...enities: Array<any>) {
+  _push(...enities: any[]) {
+    var changedIds = [];
     for(var i = 0; i < enities.length; i++) {
       this._shell.push(++this._idIncrement);
+      changedIds.push(this._idIncrement);
     }
     var result = this._target.push.apply(this._target, enities);
-    this._callback('push', this);
+    this._callback('push', changedIds, this);
 
     return result;
   }
 
-  _unshift(...enities: Array<any>) {
+  _unshift(...enities: any[]) {
+    var changedIds = [];
     for(var i = 0; i < enities.length; i++) {
       this._shell.unshift(++this._idIncrement);
+      changedIds.push(this._idIncrement);
     }
     var result = this._target.unshift.apply(this._target, enities);
-    this._callback("unshift", this);
+    this._callback("unshift", changedIds, this);
 
     return result;
   }
