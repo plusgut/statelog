@@ -1,4 +1,4 @@
-type Callback = (type: string, changedIds: number[], arrayTracker: ArrayTracker) => void
+type Callback = (type: string, changedIds: number[]) => void
 
 class ArrayTracker {
   _idIncrement: number
@@ -50,7 +50,7 @@ class ArrayTracker {
       changedIds.push(this._idIncrement);
     }
     var result = this._target.push.apply(this._target, enities);
-    this._callback('push', changedIds, this);
+    this._callback('push', changedIds);
 
     return result;
   }
@@ -62,7 +62,7 @@ class ArrayTracker {
       changedIds.push(this._idIncrement);
     }
     var result = this._target.unshift.apply(this._target, enities);
-    this._callback("unshift", changedIds, this);
+    this._callback("unshift", changedIds);
 
     return result;
   }
