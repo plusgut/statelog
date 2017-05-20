@@ -4,7 +4,7 @@
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start karma.conf.js --no-auto-watch --single-run"
+    "test": "tslint src/**/*.ts && ./node_modules/karma/bin/karma start karma.conf.js --no-auto-watch --single-run"
   },
   "devDependencies": {
     "browserify": "^14.3.0",
