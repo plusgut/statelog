@@ -21,7 +21,7 @@ before_install:
   - "npm config set spin false"
   - "npm --version"
   - "npm install gulp -g"
-  - "phantomjs --version"
+  - "npm install tslint -g"
   - "rm -f /tmp/*.dmp"
   - "google-chrome --version"
 
