@@ -28,6 +28,8 @@ class ArrayTracker {
         return this._push.bind(this);
       case 'unshift': 
         return this._unshift.bind(this);
+      case 'splice': 
+        return this._splice.bind(this);
       default:
         if(this._target.hasOwnProperty(property)) {
           // @TODO add proxy for nesting
@@ -43,31 +45,58 @@ class ArrayTracker {
     throw new Error('Setting values is not yet possible');
   }
 
-  _push(...enities: any[]) {
+  _push(...entities: any[]) {
     var changedIds     = [];
     var changedIndexes = [];
-    for(var i = 0; i < enities.length; i++) {
+    for(var i = 0; i < entities.length; i++) {
       this._shell.push(++this._idIncrement);
       changedIds.push(this._idIncrement);
       changedIndexes.push(this._target.length + 1);
     }
-    var result = this._target.push.apply(this._target, enities);
+    var result = this._target.push.apply(this._target, entities);
     this._callback('create', changedIds, changedIndexes);
 
     return result;
   }
 
-  _unshift(...enities: any[]) {
+  _unshift(...entities: any[]) {
     var changedIds = [];
     var changedIndexes = [];
-    for(var i = 0; i < enities.length; i++) {
+    for(var i = 0; i < entities.length; i++) {
       this._shell.unshift(++this._idIncrement);
       changedIds.push(this._idIncrement);
       changedIndexes.push(i);
     }
-    var result = this._target.unshift.apply(this._target, enities);
+    var result = this._target.unshift.apply(this._target, entities);
     this._callback("create", changedIds, changedIndexes);
 
+    return result;
+  }
+
+  _splice(start: number, deleteCount: number, ...entities: any[]) {
+    var createIndexes = [];
+    var createIds     = []
+    var deleteIndexes = [];
+
+    var shellArgs = [start, deleteCount];
+
+    for(var deleteIndex = start; deleteIndex <= deleteCount; deleteIndex++) {
+      deleteIndexes.push(deleteIndex);
+    }
+
+    for(var createIndex = 0; createIndex < entities.length; createIndex++) {
+      shellArgs.push(++this._idIncrement);
+      createIds.push(this._idIncrement);
+      createIndexes.push(start + createIndex);
+    }
+
+    var deleteIds = this._shell.splice.apply(this._shell, shellArgs);
+
+    this._shell.splice(start + deleteCount);
+
+    var result = this._target.splice.apply(this._target, arguments);
+    this._callback("delete", deleteIds, deleteIndexes);
+    this._callback("create", createIds, createIndexes);
     return result;
   }
 
