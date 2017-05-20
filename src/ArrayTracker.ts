@@ -1,11 +1,11 @@
-type Callback = (type: string, changedIds: number[], changedIndexes: number[]) => void
+type Callback = (type: string, changedIds: number[], changedIndexes: number[]) => void;
 
 class ArrayTracker {
-  _idIncrement: number
-  _target: any
-  _shell: Array<number>
-  _changes: any
-  _callback: Callback
+  _idIncrement: number;
+  _target: any;
+  _shell: number[];
+  _changes: any;
+  _callback: Callback;
 
   constructor(target: any[], callback: Callback) {
     this._target = target;
@@ -13,7 +13,7 @@ class ArrayTracker {
     this._shell = [];
     this.clearChanges();
 
-    for(this._idIncrement = 0; this._idIncrement < target.length; this._idIncrement++) {
+    for (this._idIncrement = 0; this._idIncrement < target.length; this._idIncrement += 1) {
       this._shell.push(this._idIncrement);
     }
   }
@@ -23,7 +23,7 @@ class ArrayTracker {
   }
 
   get(target: any, property: string, proxy: any) {
-    switch(property) {
+    switch (property) {
       case 'push': 
         return this._push.bind(this);
       case 'unshift': 
@@ -31,7 +31,7 @@ class ArrayTracker {
       case 'splice': 
         return this._splice.bind(this);
       default:
-        if(this._target.hasOwnProperty(property)) {
+        if (this._target.hasOwnProperty(property)) {
           // @TODO add proxy for nesting
           // @TODO add caching
           return this._target[property];
@@ -46,55 +46,58 @@ class ArrayTracker {
   }
 
   _push(...entities: any[]) {
-    var changedIds     = [];
-    var changedIndexes = [];
-    for(var i = 0; i < entities.length; i++) {
-      this._shell.push(++this._idIncrement);
+    const changedIds     = [];
+    const changedIndexes = [];
+    for (let i = 0; i < entities.length; i += 1) {
+      this._idIncrement += 1;
+      this._shell.push(this._idIncrement);
       changedIds.push(this._idIncrement);
       changedIndexes.push(this._target.length + 1);
     }
-    var result = this._target.push.apply(this._target, entities);
+    const result = this._target.push.apply(this._target, entities);
     this._callback('create', changedIds, changedIndexes);
 
     return result;
   }
 
   _unshift(...entities: any[]) {
-    var changedIds = [];
-    var changedIndexes = [];
-    for(var i = 0; i < entities.length; i++) {
-      this._shell.unshift(++this._idIncrement);
+    const changedIds = [];
+    const changedIndexes = [];
+    for (let i = 0; i < entities.length; i += 1) {
+      this._idIncrement += 1;
+      this._shell.unshift(this._idIncrement);
       changedIds.push(this._idIncrement);
       changedIndexes.push(i);
     }
-    var result = this._target.unshift.apply(this._target, entities);
-    this._callback("create", changedIds, changedIndexes);
+    const result = this._target.unshift.apply(this._target, entities);
+    this._callback('create', changedIds, changedIndexes);
 
     return result;
   }
 
   _splice(start: number, deleteCount: number, ...entities: any[]) {
-    var createIndexes = [];
-    var createIds     = []
-    var deleteIndexes = [];
+    const createIndexes = [];
+    const createIds     = [];
+    const deleteIndexes = [];
 
-    var shellArgs = [start, deleteCount];
+    const shellArgs = [start, deleteCount];
 
-    for(var deleteIndex = start; deleteIndex <= deleteCount; deleteIndex++) {
+    for (let deleteIndex = start; deleteIndex <= deleteCount; deleteIndex += 1) {
       deleteIndexes.push(deleteIndex);
     }
 
-    for(var createIndex = 0; createIndex < entities.length; createIndex++) {
-      shellArgs.push(++this._idIncrement);
+    for (let createIndex = 0; createIndex < entities.length; createIndex += 1) {
+      this._idIncrement += 1;
+      shellArgs.push(this._idIncrement);
       createIds.push(this._idIncrement);
       createIndexes.push(start + createIndex);
     }
 
-    var deleteIds = this._shell.splice.apply(this._shell, shellArgs);
+    const deleteIds = this._shell.splice.apply(this._shell, shellArgs);
 
-    var result = this._target.splice.apply(this._target, arguments);
-    this._callback("delete", deleteIds, deleteIndexes);
-    this._callback("create", createIds, createIndexes);
+    const result = this._target.splice.apply(this._target, arguments);
+    this._callback('delete', deleteIds, deleteIndexes);
+    this._callback('create', createIds, createIndexes);
     return result;
   }
 
