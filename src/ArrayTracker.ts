@@ -92,8 +92,6 @@ class ArrayTracker {
 
     var deleteIds = this._shell.splice.apply(this._shell, shellArgs);
 
-    this._shell.splice(start + deleteCount);
-
     var result = this._target.splice.apply(this._target, arguments);
     this._callback("delete", deleteIds, deleteIndexes);
     this._callback("create", createIds, createIndexes);
