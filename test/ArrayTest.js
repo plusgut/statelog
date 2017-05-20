@@ -5,36 +5,30 @@ const TO   = 3;
 
 describe('Test array functionality', () => {
   beforeEach(() => {
-    this.pushSpyFirst     = jasmine.createSpy();
-    this.pushSpySecond    = jasmine.createSpy();
-    this.unshiftSpyFirst  = jasmine.createSpy();
-    this.unshiftSpySecond = jasmine.createSpy();
-    this.removeSpyFirst   = jasmine.createSpy();
-    this.removeSpySecond  = jasmine.createSpy();
-    this.setSpyFirst      = jasmine.createSpy();
-    this.setSpySecond     = jasmine.createSpy();
+    this.createSpyFirst   = jasmine.createSpy("createFirst");
+    this.createSpySecond  = jasmine.createSpy("createSecond");
+    this.updateSpyFirst   = jasmine.createSpy("updateFirst");
+    this.updateSpySecond  = jasmine.createSpy("updateSecond");
+    this.deleteSpyFirst   = jasmine.createSpy("deleteFirst");
+    this.deleteSpySecond  = jasmine.createSpy("deleteSecond");
 
     this.stateLog = new StateLog(generateValues(FROM, TO));
-    this.stateLog.on('push',    this.pushSpyFirst);
-    this.stateLog.on('push',    this.pushSpySecond);
-    this.stateLog.on('unshift', this.unshiftSpyFirst);
-    this.stateLog.on('unshift', this.unshiftSpySecond);
-    this.stateLog.on('remove',  this.removeSpyFirst);
-    this.stateLog.on('remove',  this.removeSpySecond);
-    this.stateLog.on('set',     this.setSpyFirst);
-    this.stateLog.on('set',     this.setSpySecond);
+    this.stateLog.on('create', this.createSpyFirst);
+    this.stateLog.on('create', this.createSpySecond);
+    this.stateLog.on('update',  this.updateSpyFirst);
+    this.stateLog.on('update',  this.updateSpySecond);
+    this.stateLog.on('delete',  this.deleteSpyFirst);
+    this.stateLog.on('delete',  this.deleteSpySecond);
 
     window.stateLog = this.stateLog;
 
     this.checkEvents = (opt) => {
-      expect(this.pushSpyFirst.calls.count()).toEqual(opt.push);
-      expect(this.pushSpySecond.calls.count()).toEqual(opt.push);
-      expect(this.unshiftSpyFirst.calls.count()).toEqual(opt.unshift);
-      expect(this.unshiftSpySecond.calls.count()).toEqual(opt.unshift);
-      expect(this.removeSpyFirst.calls.count()).toEqual(opt.remove);
-      expect(this.removeSpySecond.calls.count()).toEqual(opt.remove);
-      expect(this.setSpyFirst.calls.count()).toEqual(opt.set);
-      expect(this.setSpySecond.calls.count()).toEqual(opt.set);
+      expect(this.createSpyFirst.calls.count()).toEqual(opt.create);
+      expect(this.createSpySecond.calls.count()).toEqual(opt.create);
+      expect(this.updateSpyFirst.calls.count()).toEqual(opt.update);
+      expect(this.updateSpySecond.calls.count()).toEqual(opt.update);
+      expect(this.deleteSpyFirst.calls.count()).toEqual(opt.delete);
+      expect(this.deleteSpySecond.calls.count()).toEqual(opt.delete);
     };
   });
 
@@ -45,20 +39,18 @@ describe('Test array functionality', () => {
     expect(this.stateLog.proxy).toEqual(generateValues(FROM, TO));
     expect(this.stateLog.proxy.length).toEqual(TO);
     this.checkEvents({
-      push: 0,
-      unshift: 0,
-      remove: 0,
-      set: 0,
+      create: 0,
+      update: 0,
+      delete: 0,
     });
   });
 
   it('The should be single pushable', () => {
     expect(this.stateLog.proxy.push(generateValue(TO))).toEqual(TO + 1);
     this.checkEvents({
-      push: 1,
-      unshift: 0,
-      remove: 0,
-      set: 0,
+      create: 1,
+      update: 0,
+      delete: 0,
     });
     expect(this.stateLog.proxy).toEqual(generateValues(FROM, TO).concat([generateValue(TO)]));
   });
@@ -71,10 +63,9 @@ describe('Test array functionality', () => {
   it('The should be single unshiftable', () => {
     expect(this.stateLog.proxy.unshift(generateValue(TO))).toEqual(TO + 1);
     this.checkEvents({
-      push: 0,
-      unshift: 1,
-      remove: 0,
-      set: 0,
+      create: 1,
+      update: 0,
+      delete: 0,
     });
     expect(this.stateLog.proxy).toEqual([generateValue(TO)].concat(generateValues(FROM, TO)));
   });
@@ -104,44 +95,41 @@ describe('Test array functionality', () => {
   it("push event gets called", () => {
     this.stateLog.proxy.push("foo");
     this.checkEvents({
-      push: 1,
-      unshift: 0,
-      remove: 0,
-      set: 0,
+      create: 1,
+      update: 0,
+      delete: 0,
     });
-    expect(this.pushSpyFirst).toHaveBeenCalledWith([TO + 1], this.stateLog);
-    expect(this.pushSpyFirst).not.toHaveBeenCalledWith([TO + 2], this.stateLog);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 1], [TO + 1], this.stateLog);
+    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 2], jasmine.any, this.stateLog);
 
     this.stateLog.proxy.push("bar");
     this.checkEvents({
-      push: 2,
-      unshift: 0,
-      remove: 0,
-      set: 0,
+      create: 2,
+      update: 0,
+      delete: 0,
     });
-    expect(this.pushSpyFirst).toHaveBeenCalledWith([TO + 2], this.stateLog);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [TO + 2], this.stateLog);
   });
 
   it("unshift event gets called", () => {
     this.stateLog.proxy.unshift("foo");
     this.checkEvents({
-      push: 0,
-      unshift: 1,
-      remove: 0,
-      set: 0,
+      create: 1,
+      update: 0,
+      delete: 0,
     });
-    expect(this.unshiftSpyFirst).toHaveBeenCalledWith([TO + 1], this.stateLog);
-    expect(this.unshiftSpyFirst).not.toHaveBeenCalledWith([TO + 2], this.stateLog);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 1], [0], this.stateLog);
+    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 2], jasmine.any, this.stateLog);
 
     this.stateLog.proxy.unshift("bar");
     this.checkEvents({
-      push: 0,
-      unshift: 2,
-      remove: 0,
-      set: 0,
+      create: 2,
+      update: 0,
+      delete: 0,
     });
-    expect(this.unshiftSpyFirst).toHaveBeenCalledWith([TO + 2], this.stateLog);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [0], this.stateLog);
   });
+
 
   it("remove event gets called", () => {
 

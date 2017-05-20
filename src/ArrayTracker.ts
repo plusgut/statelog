@@ -1,4 +1,4 @@
-type Callback = (type: string, changedIds: number[]) => void
+type Callback = (type: string, changedIds: number[], changedIndexes: number[]) => void
 
 class ArrayTracker {
   _idIncrement: number
@@ -44,25 +44,29 @@ class ArrayTracker {
   }
 
   _push(...enities: any[]) {
-    var changedIds = [];
+    var changedIds     = [];
+    var changedIndexes = [];
     for(var i = 0; i < enities.length; i++) {
       this._shell.push(++this._idIncrement);
       changedIds.push(this._idIncrement);
+      changedIndexes.push(this._target.length + 1);
     }
     var result = this._target.push.apply(this._target, enities);
-    this._callback('push', changedIds);
+    this._callback('create', changedIds, changedIndexes);
 
     return result;
   }
 
   _unshift(...enities: any[]) {
     var changedIds = [];
+    var changedIndexes = [];
     for(var i = 0; i < enities.length; i++) {
       this._shell.unshift(++this._idIncrement);
       changedIds.push(this._idIncrement);
+      changedIndexes.push(i);
     }
     var result = this._target.unshift.apply(this._target, enities);
-    this._callback("unshift", changedIds);
+    this._callback("create", changedIds, changedIndexes);
 
     return result;
   }
