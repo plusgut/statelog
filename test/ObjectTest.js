@@ -42,6 +42,11 @@ describe('Test array functionality', () => {
     expect(setSpy).toHaveBeenCalledWith(this.stateLog);
     expect(nestedSetSpy.calls.count()).toEqual(1);
     expect(nestedSetSpy).toHaveBeenCalledWith(nestedStateLog);
+
+    this.stateLog.proxy.foo = "barbar";
+    expect(setSpy.calls.count()).toEqual(2);
+    expect(nestedSetSpy.calls.count()).toEqual(1);
+    expect(this.stateLog.proxyHandler.getStateLogByIndex("foo")).toBe(undefined);
   });
 });
 
