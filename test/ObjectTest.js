@@ -30,7 +30,7 @@ describe('Test array functionality', () => {
 
   it("check if nested event gets fired", () => {
     var setSpy = jasmine.createSpy("set foo");
-    var nestedSetSpy = jasmine.createSpy("nesetdset foo");
+    var nestedSetSpy = jasmine.createSpy("nestedset foo");
     this.stateLog.on("set.foo", setSpy);
 
     this.stateLog.proxy.foo = {foo2: "bar2"};
