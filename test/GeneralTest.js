@@ -1,4 +1,4 @@
-/* global jasmine, describe, it, beforeEach, expect, StateLog, window */
+/* global describe, it, expect, StateLog */
 
 describe('Test array functionality', () => {
 
