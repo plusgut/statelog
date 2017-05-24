@@ -16,7 +16,7 @@ class ArrayTracker {
     }
   }
 
-  public get(target: any, property: string, proxy: any) {
+  private get(target: any, property: string, proxy: any) {
     switch (property) {
       case 'push': 
         return this.push.bind(this);
@@ -35,7 +35,7 @@ class ArrayTracker {
     }
   }
 
-  public set() {
+  private set() {
     throw new Error('Setting values is not yet possible');
   }
 

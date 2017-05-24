@@ -2,7 +2,7 @@
   "name": "statelog",
   "version": "0.1.0",
   "description": "",
-  "main": "gulpfile.js",
+  "main": "src/StateLog.js",
   "scripts": {
     "test": "tslint src/**/*.ts && ./node_modules/karma/bin/karma start karma.conf.js --no-auto-watch --single-run"
   },

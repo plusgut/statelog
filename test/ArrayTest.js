@@ -20,7 +20,7 @@ describe('Test array functionality', () => {
     this.stateLog.on('delete',  this.deleteSpyFirst);
     this.stateLog.on('delete',  this.deleteSpySecond);
 
-    window.stateLog = this.stateLog;
+    window.arrStateLog = this.stateLog;
 
     this.checkEvents = (opt) => {
       expect(this.createSpyFirst.calls.count()).toEqual(opt.create);
