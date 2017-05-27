@@ -1,5 +1,5 @@
 type Tracker = {
-  getStateLogByIndex(index: string): StateLog;
+  // getStateLogByIndex(index: string): StateLog;
 };
 
 type Callback = (

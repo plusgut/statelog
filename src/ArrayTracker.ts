@@ -101,9 +101,9 @@ class ArrayTracker {
 
   }
 
-  public getStateLogByIndex(index: string): StateLog {
-
-  }
+  // public getStateLogByIndex(index: string): StateLog {
+    
+  // }
 }
 
 export default ArrayTracker;
