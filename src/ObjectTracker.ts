@@ -34,7 +34,7 @@ class ObjectTracker {
     
   }
 
-  public getStateLogByIndex(index: string) {
+  public getStateLogByIndex(index: string): StateLog {
     return this.stateLogContainer[index];
   }
 }

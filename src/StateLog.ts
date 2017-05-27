@@ -1,8 +1,12 @@
 type Tracker = {
-  // getNestedObjectById: () => void;
+  getStateLogByIndex(index: string): StateLog;
 };
 
-type Callback = any;
+type Callback = (
+  stateLog: StateLog,
+  changedIds?: number[],
+  changedIndexes?: number[],
+) => void;
 
 import ArrayTracker from './ArrayTracker';
 import ObjectTracker from './ObjectTracker';
@@ -10,10 +14,12 @@ import ObjectTracker from './ObjectTracker';
 class StateLog {
   public proxyHandler: Tracker;
   public proxy: any;
-  private callbacks: {callback: Callback, type: string}[];
+  private callbacks: {
+    [key: string]: Callback[];
+  };
 
   constructor(target: any) {
-    this.callbacks = [];
+    this.callbacks = {};
     if (Array.isArray(target)) {
       this.proxyHandler =  new ArrayTracker(target, this.trigger.bind(this));
       this.proxy = new (<any>window).Proxy(target, this.proxyHandler);
@@ -26,16 +32,19 @@ class StateLog {
   }
 
   public on(type: string, callback: Callback) {
-    this.callbacks.push({ type, callback });
+    if (!this.callbacks[type]) {
+      this.callbacks[type] = [];
+    }
+    this.callbacks[type].push(callback);
   }
 
   private trigger(type: string, changedIds:number[], changedIndexes:number[]) {
-    for (let i = 0; i < this.callbacks.length; i += 1) {
-      if (type === this.callbacks[i].type) {
-        if (changedIds && changedIndexes) {
-          this.callbacks[i].callback(changedIds, changedIndexes, this);
+    if (this.callbacks[type]) {
+      for (let i = 0; i < this.callbacks[type].length; i += 1) {
+        if (type === 'create' || type === 'delete') {
+          this.callbacks[type][i](this, changedIds, changedIndexes);
         } else {
-          this.callbacks[i].callback(this);
+          this.callbacks[type][i](this);
         }
       }
     }

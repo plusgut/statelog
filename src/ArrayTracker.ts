@@ -1,5 +1,7 @@
 type Callback = (type: string, changedIds: number[], changedIndexes: number[]) => void;
 
+import StateLog from './StateLog';
+
 class ArrayTracker {
   private idIncrement: number;
   private target: any;
@@ -96,6 +98,10 @@ class ArrayTracker {
   }
 
   private pop() {
+
+  }
+
+  public getStateLogByIndex(index: string): StateLog {
 
   }
 }

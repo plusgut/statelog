@@ -99,8 +99,8 @@ describe('Test array functionality', () => {
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 1], [TO + 1], this.stateLog);
-    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 2], jasmine.any, this.stateLog);
+    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [TO + 1], [TO + 1]);
+    expect(this.createSpyFirst).not.toHaveBeenCalledWith(this.stateLog, [TO + 2], jasmine.any);
 
     this.stateLog.proxy.push("bar");
     this.checkEvents({
@@ -108,7 +108,7 @@ describe('Test array functionality', () => {
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [TO + 2], this.stateLog);
+    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [TO + 2], [TO + 2]);
   });
 
   it("insert event gets called at unshift", () => {
@@ -118,8 +118,8 @@ describe('Test array functionality', () => {
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 1], [0], this.stateLog);
-    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 2], jasmine.any, this.stateLog);
+    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [TO + 1], [0]);
+    expect(this.createSpyFirst).not.toHaveBeenCalledWith(this.stateLog, [TO + 2], jasmine.any);
 
     this.stateLog.proxy.unshift("bar");
     this.checkEvents({
@@ -127,7 +127,7 @@ describe('Test array functionality', () => {
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [0], this.stateLog);
+    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [TO + 2], [0]);
   });
 
 
@@ -141,8 +141,8 @@ describe('Test array functionality', () => {
       delete: 1,
     });
 
-    expect(this.createSpyFirst).toHaveBeenCalledWith([4, 5], [1, 2], this.stateLog);
-    expect(this.deleteSpyFirst).toHaveBeenCalledWith([1, 2], [1, 2], this.stateLog);
+    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [4, 5], [1, 2]);
+    expect(this.deleteSpyFirst).toHaveBeenCalledWith(this.stateLog, [1, 2], [1, 2]);
 
   });
 });
