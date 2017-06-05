@@ -7,14 +7,9 @@ abstract class Tracker {
 
   constructor() {
     this.eventHandler = new EventHandler();
-
   }
 
   public on(eventName: string, callback: Callback) {
-    this.eventHandler.on(eventName, callback);
-  }
-
-  public trigger(eventName: string, callback: Callback) {
     this.eventHandler.on(eventName, callback);
   }
 }

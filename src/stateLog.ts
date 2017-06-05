@@ -1,7 +1,3 @@
-type Tracker = {
-  // getStateLogByIndex(index: string): StateLog;
-};
-
 import ArrayTracker from './ArrayTracker';
 import ObjectTracker from './ObjectTracker';
 
