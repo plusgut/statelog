@@ -1,34 +1,34 @@
-/* global describe, it, expect, StateLog */
+/* global describe, it, expect, stateLog */
 
 describe('Test array functionality', () => {
 
   it("check if exception gets thrown for null value", () => {
     expect(() => {
-      new StateLog(null);
+      stateLog(null);
     }).toThrow(new TypeError('Given value is not referencable'));
   });
 
   it("check if exception gets thrown for undefined value", () => {
     expect(() => {
-      new StateLog(undefined);
+      stateLog(undefined);
     }).toThrow(new TypeError('Given value is not referencable'));
   });
 
   it("check if exception gets thrown for number value", () => {
     expect(() => {
-      new StateLog(42);
+      stateLog(42);
     }).toThrow(new TypeError('Given value is not referencable'));
   });
 
   it("check if exception gets thrown for string value", () => {
     expect(() => {
-      new StateLog("foo");
+      stateLog("foo");
     }).toThrow(new TypeError('Given value is not referencable'));
   });
 
   it("check if exception gets thrown for boolean value", () => {
     expect(() => {
-      new StateLog(true);
+      stateLog(true);
     }).toThrow(new TypeError('Given value is not referencable'));
   });
 });

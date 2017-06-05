@@ -1,6 +1,6 @@
 {
     "files": [
-        "src/main.ts"
+        "src/stateLog.ts"
     ],
     "compilerOptions": {
         "noImplicitAny": true,

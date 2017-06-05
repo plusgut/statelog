@@ -10,7 +10,7 @@ function getBrowserifyConfig() {
   return browserify({
     basedir: '.',
     debug: true,
-    entries: ['src/StateLog.ts'],
+    entries: ['src/stateLog.ts'],
     cache: {},
     packageCache: {},
   });

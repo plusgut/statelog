@@ -1,40 +1,47 @@
 type Callback = (type: string) => void;
 
-import StateLog from './StateLog';
+import stateLog from './stateLog';
+import EventHandler from './EventHandler';
+import Tracker from './Tracker';
 
-class ObjectTracker {
+class ObjectTracker extends Tracker{
   private target: any;
-  private callback: Callback;
-  private stateLogContainer: {[key: string]: StateLog};
+  private stateLogContainer: {[key: string]: any};
 
-  constructor(target: any, callback: Callback) {
+  constructor(target: any) {
+    super();
     this.target = target;
-    this.callback = callback;
     this.stateLogContainer = {};
   }
 
   private get(target: any, index: string, proxy: any) {
-    if (this.stateLogContainer.hasOwnProperty(index)) {
-      return this.stateLogContainer[index].proxy;
+    if (index === '__stateLog__') {
+      return this;
+    } else if (this.stateLogContainer.hasOwnProperty(index)) {
+      return this.stateLogContainer[index];
     } else {
-      return this.target[index];
+      const result = this.target[index];
+      if (typeof result === 'object' && result !== null && !result.__stateLog__) {
+        this.stateLogContainer[index] = stateLog(result);
+        return this.stateLogContainer[index];
+      } else {
+        return result;
+      }
     }
   }
 
   private set(target: any, index: string, value: any) {
     if (this.target[index] !== value) {
       this.target[index] = value;
-      if (typeof value === 'object' && value !== null) {
-        this.stateLogContainer[index] = new StateLog(value);
-      } else if (this.stateLogContainer.hasOwnProperty(index)) {
+      if (this.stateLogContainer.hasOwnProperty(index)) {
         delete this.stateLogContainer[index];
       }
-      this.callback('set.' + index);
+      this.eventHandler.trigger('set.' + index);
     }
     
   }
 
-  public getStateLogByIndex(index: string): StateLog {
+  public getStateLogByIndex(index: string): any {
     return this.stateLogContainer[index];
   }
 }

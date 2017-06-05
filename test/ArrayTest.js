@@ -1,4 +1,4 @@
-/* global jasmine, describe, it, beforeEach, expect, StateLog, window */
+/* global jasmine, describe, it, beforeEach, expect, stateLog, window */
 
 const FROM = 0;
 const TO   = 3;
@@ -12,15 +12,15 @@ describe('Test array functionality', () => {
     this.deleteSpyFirst   = jasmine.createSpy("deleteFirst");
     this.deleteSpySecond  = jasmine.createSpy("deleteSecond");
 
-    this.stateLog = new StateLog(generateValues(FROM, TO));
-    this.stateLog.on('create', this.createSpyFirst);
-    this.stateLog.on('create', this.createSpySecond);
-    this.stateLog.on('update',  this.updateSpyFirst);
-    this.stateLog.on('update',  this.updateSpySecond);
-    this.stateLog.on('delete',  this.deleteSpyFirst);
-    this.stateLog.on('delete',  this.deleteSpySecond);
+    this.stateLogObj = stateLog(generateValues(FROM, TO));
+    this.stateLogObj.__stateLog__.on('create', this.createSpyFirst);
+    this.stateLogObj.__stateLog__.on('create', this.createSpySecond);
+    this.stateLogObj.__stateLog__.on('update',  this.updateSpyFirst);
+    this.stateLogObj.__stateLog__.on('update',  this.updateSpySecond);
+    this.stateLogObj.__stateLog__.on('delete',  this.deleteSpyFirst);
+    this.stateLogObj.__stateLog__.on('delete',  this.deleteSpySecond);
 
-    window.arrStateLog = this.stateLog;
+    window.arrStateLog = this.stateLogObj;
 
     this.checkEvents = (opt) => {
       expect(this.createSpyFirst.calls.count()).toEqual(opt.create);
@@ -33,11 +33,11 @@ describe('Test array functionality', () => {
   });
 
   it('The array should act like one', () => {
-    expect(this.stateLog.proxy[0]).toEqual(generateValue(FROM));
-    expect(this.stateLog.proxy[1]).toEqual(generateValue(FROM + 1));
-    expect(this.stateLog.proxy[2]).toEqual(generateValue(FROM + 2));
-    expect(this.stateLog.proxy).toEqual(generateValues(FROM, TO));
-    expect(this.stateLog.proxy.length).toEqual(TO);
+    expect(this.stateLogObj[0]).toEqual(generateValue(FROM));
+    expect(this.stateLogObj[1]).toEqual(generateValue(FROM + 1));
+    expect(this.stateLogObj[2]).toEqual(generateValue(FROM + 2));
+    expect(this.stateLogObj).toEqual(generateValues(FROM, TO));
+    expect(this.stateLogObj.length).toEqual(TO);
     this.checkEvents({
       create: 0,
       update: 0,
@@ -46,33 +46,33 @@ describe('Test array functionality', () => {
   });
 
   it('The should be single pushable', () => {
-    expect(this.stateLog.proxy.push(generateValue(TO))).toEqual(TO + 1);
+    expect(this.stateLogObj.push(generateValue(TO))).toEqual(TO + 1);
     this.checkEvents({
       create: 1,
       update: 0,
       delete: 0,
     });
-    expect(this.stateLog.proxy).toEqual(generateValues(FROM, TO).concat([generateValue(TO)]));
+    expect(this.stateLogObj).toEqual(generateValues(FROM, TO).concat([generateValue(TO)]));
   });
 
   it('The should be multiple pushable', () => {
-    expect(this.stateLog.proxy.push(generateValue(TO), generateValue(TO + 1))).toEqual(TO + 2);
-    expect(this.stateLog.proxy).toEqual(generateValues(FROM, TO + 2));
+    expect(this.stateLogObj.push(generateValue(TO), generateValue(TO + 1))).toEqual(TO + 2);
+    expect(this.stateLogObj).toEqual(generateValues(FROM, TO + 2));
   });
 
   it('The should be single unshiftable', () => {
-    expect(this.stateLog.proxy.unshift(generateValue(TO))).toEqual(TO + 1);
+    expect(this.stateLogObj.unshift(generateValue(TO))).toEqual(TO + 1);
     this.checkEvents({
       create: 1,
       update: 0,
       delete: 0,
     });
-    expect(this.stateLog.proxy).toEqual([generateValue(TO)].concat(generateValues(FROM, TO)));
+    expect(this.stateLogObj).toEqual([generateValue(TO)].concat(generateValues(FROM, TO)));
   });
 
   it('The should be single multiple unshiftable', () => {
-    expect(this.stateLog.proxy.unshift(generateValue(TO), generateValue(TO + 1))).toEqual(TO + 2);
-    expect(this.stateLog.proxy).toEqual(generateValues(TO, TO + 2).concat(generateValues(FROM, TO)));
+    expect(this.stateLogObj.unshift(generateValue(TO), generateValue(TO + 1))).toEqual(TO + 2);
+    expect(this.stateLogObj).toEqual(generateValues(TO, TO + 2).concat(generateValues(FROM, TO)));
   });
 
 
@@ -80,69 +80,69 @@ describe('Test array functionality', () => {
     var originalMapSpy = jasmine.createSpy().and.returnValue(true);
     var proxyMapSpy = jasmine.createSpy().and.returnValue(true);
     var original = generateValues(FROM, TO);
-    expect(original.map(originalMapSpy)).toEqual(this.stateLog.proxy.map(proxyMapSpy));
+    expect(original.map(originalMapSpy)).toEqual(this.stateLogObj.map(proxyMapSpy));
   });
 
   it('The map function should work, even with push', () => {
     var originalMapSpy = jasmine.createSpy().and.returnValue(true);
     var proxyMapSpy = jasmine.createSpy().and.returnValue(true);
     var original = generateValues(FROM, TO + 1);
-    this.stateLog.proxy.push(generateValue(TO));
+    this.stateLogObj.push(generateValue(TO));
 
-    expect(original.map(originalMapSpy)).toEqual(this.stateLog.proxy.map(proxyMapSpy));
+    expect(original.map(originalMapSpy)).toEqual(this.stateLogObj.map(proxyMapSpy));
   });
 
   it("insert event gets called at push", () => {
-    this.stateLog.proxy.push("foo");
+    this.stateLogObj.push("foo");
     this.checkEvents({
       create: 1,
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [TO + 1], [TO + 1]);
-    expect(this.createSpyFirst).not.toHaveBeenCalledWith(this.stateLog, [TO + 2], jasmine.any);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 1], [TO + 1]);
+    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 2], jasmine.any);
 
-    this.stateLog.proxy.push("bar");
+    this.stateLogObj.push("bar");
     this.checkEvents({
       create: 2,
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [TO + 2], [TO + 2]);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [TO + 2]);
   });
 
   it("insert event gets called at unshift", () => {
-    this.stateLog.proxy.unshift("foo");
+    this.stateLogObj.unshift("foo");
     this.checkEvents({
       create: 1,
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [TO + 1], [0]);
-    expect(this.createSpyFirst).not.toHaveBeenCalledWith(this.stateLog, [TO + 2], jasmine.any);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 1], [0]);
+    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 2], jasmine.any);
 
-    this.stateLog.proxy.unshift("bar");
+    this.stateLogObj.unshift("bar");
     this.checkEvents({
       create: 2,
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [TO + 2], [0]);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [0]);
   });
 
 
   it("splice should work", () => {
     var compareArray = generateValues(FROM, TO);
-    expect(compareArray.splice(1, 2, TO + 1, TO + 2)).toEqual(this.stateLog.proxy.splice(1, 2, TO + 1, TO + 2));
-    expect(compareArray).toEqual(this.stateLog.proxy);
+    expect(compareArray.splice(1, 2, TO + 1, TO + 2)).toEqual(this.stateLogObj.splice(1, 2, TO + 1, TO + 2));
+    expect(compareArray).toEqual(this.stateLogObj);
     this.checkEvents({
       create: 1,
       update: 0,
       delete: 1,
     });
 
-    expect(this.createSpyFirst).toHaveBeenCalledWith(this.stateLog, [4, 5], [1, 2]);
-    expect(this.deleteSpyFirst).toHaveBeenCalledWith(this.stateLog, [1, 2], [1, 2]);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([4, 5], [1, 2]);
+    expect(this.deleteSpyFirst).toHaveBeenCalledWith([1, 2], [1, 2]);
 
   });
 });

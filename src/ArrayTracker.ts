@@ -1,16 +1,16 @@
 type Callback = (type: string, changedIds: number[], changedIndexes: number[]) => void;
 
-import StateLog from './StateLog';
+import stateLog from './stateLog';
+import Tracker from './Tracker';
 
-class ArrayTracker {
+class ArrayTracker extends Tracker{
   private idIncrement: number;
   private target: any;
   private shell: number[];
-  private callback: Callback;
 
-  constructor(target: any[], callback: Callback) {
+  constructor(target: any[]) {
+    super();
     this.target = target;
-    this.callback = callback;
     this.shell = [];
 
     for (this.idIncrement = 0; this.idIncrement < target.length; this.idIncrement += 1) {
@@ -26,6 +26,8 @@ class ArrayTracker {
         return this.unshift.bind(this);
       case 'splice': 
         return this.splice.bind(this);
+      case '__stateLog__':
+        return this;
       default:
         if (this.target.hasOwnProperty(property)) {
           // @TODO add proxy for nesting
@@ -51,7 +53,7 @@ class ArrayTracker {
       changedIndexes.push(this.target.length + 1);
     }
     const result = this.target.push.apply(this.target, entities);
-    this.callback('create', changedIds, changedIndexes);
+    this.eventHandler.trigger('create', changedIds, changedIndexes);
 
     return result;
   }
@@ -66,7 +68,7 @@ class ArrayTracker {
       changedIndexes.push(i);
     }
     const result = this.target.unshift.apply(this.target, entities);
-    this.callback('create', changedIds, changedIndexes);
+    this.eventHandler.trigger('create', changedIds, changedIndexes);
 
     return result;
   }
@@ -92,8 +94,8 @@ class ArrayTracker {
     const deleteIds = this.shell.splice.apply(this.shell, shellArgs);
 
     const result = this.target.splice.apply(this.target, arguments);
-    this.callback('delete', deleteIds, deleteIndexes);
-    this.callback('create', createIds, createIndexes);
+    this.eventHandler.trigger('delete', deleteIds, deleteIndexes);
+    this.eventHandler.trigger('create', createIds, createIndexes);
     return result;
   }
 

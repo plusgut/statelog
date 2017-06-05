@@ -1,52 +1,48 @@
-/* global jasmine, describe, it, beforeEach, expect, StateLog, window */
+/* global jasmine, describe, it, beforeEach, expect, stateLog, window */
 
 describe('Test array functionality', () => {
   beforeEach(() => {
-    this.stateLog = new StateLog(getBaseObj());
+    this.stateLogObj = stateLog(getBaseObj());
 
-    window.objStateLog = this.stateLog;
+    window.objStateLog = this.stateLogObj;
   });
 
   it("check if existing value is represented", () => {
-    expect(this.stateLog.proxy).toEqual(getBaseObj());
+    expect(this.stateLogObj).toEqual(getBaseObj());
   });
 
   it("check if event gets fired", () => {
     var setSpy = jasmine.createSpy("set foo");
-    this.stateLog.on("set.foo", setSpy);
+    this.stateLogObj.__stateLog__.on("set.foo", setSpy);
 
-    this.stateLog.proxy.foo = 'barbar';
+    this.stateLogObj.foo = 'barbar';
     expect(setSpy.calls.count()).toEqual(1);
-    expect(setSpy).toHaveBeenCalledWith(this.stateLog);
   });
 
   it("check if event doesnt get fired", () => {
     var setSpy = jasmine.createSpy("set foo");
-    this.stateLog.on("set.foo", setSpy);
+    this.stateLogObj.__stateLog__.on("set.foo", setSpy);
 
-    this.stateLog.proxy.foo = 'bar';
+    this.stateLogObj.foo = 'bar';
     expect(setSpy.calls.count()).toEqual(0);
   });
 
   it("check if nested event gets fired", () => {
     var setSpy = jasmine.createSpy("set foo");
     var nestedSetSpy = jasmine.createSpy("nestedset foo");
-    this.stateLog.on("set.foo", setSpy);
+    this.stateLogObj.__stateLog__.on("set.foo", setSpy);
 
-    this.stateLog.proxy.foo = {foo2: "bar2"};
-    var nestedStateLog = this.stateLog.proxyHandler.getStateLogByIndex("foo");
-    nestedStateLog.on("set.foo2", nestedSetSpy);
-    this.stateLog.proxy.foo.foo2 = "bar3";
+    this.stateLogObj.foo = {foo2: "bar2"};
+    this.stateLogObj.foo.__stateLog__.on("set.foo2", nestedSetSpy);
+    this.stateLogObj.foo.foo2 = "bar3";
 
     expect(setSpy.calls.count()).toEqual(1);
-    expect(setSpy).toHaveBeenCalledWith(this.stateLog);
     expect(nestedSetSpy.calls.count()).toEqual(1);
-    expect(nestedSetSpy).toHaveBeenCalledWith(nestedStateLog);
 
-    this.stateLog.proxy.foo = "barbar";
+    this.stateLogObj.foo = "barbar";
     expect(setSpy.calls.count()).toEqual(2);
     expect(nestedSetSpy.calls.count()).toEqual(1);
-    expect(this.stateLog.proxyHandler.getStateLogByIndex("foo")).toBe(undefined);
+    expect(this.stateLogObj.__stateLog__.getStateLogByIndex("foo")).toBe(undefined);
   });
 });
 
