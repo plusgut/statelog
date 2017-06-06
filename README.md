@@ -12,7 +12,7 @@ This lib adds events to objects which are triggered when something changes
   const obj = stateLog.create({foo: 'bar'});
 
   obj.__stateLog__.on('set.foo', () => {
-    console.log('gets triggered when foo is changed');
+    console.log('gets triggered when foo changes');
   });
 
   obj.foo = 'barbar';
