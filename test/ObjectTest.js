@@ -2,7 +2,7 @@
 
 describe('Test array functionality', () => {
   beforeEach(() => {
-    this.stateLogObj = stateLog(getBaseObj());
+    this.stateLogObj = stateLog.create(getBaseObj());
 
     window.objStateLog = this.stateLogObj;
   });

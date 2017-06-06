@@ -1,22 +1,39 @@
+import Tracker from './Tracker';
 import ArrayTracker from './ArrayTracker';
 import ObjectTracker from './ObjectTracker';
 
-function stateLog(target: any) {
-  let proxyHandler;
-  let proxy;
-  if (Array.isArray(target)) {
-    proxyHandler =  new ArrayTracker(target);
-    proxy = new (<any>window).Proxy(target, proxyHandler);
-  } else if (typeof target === 'object' && target !== null) {
-    proxyHandler =  new ObjectTracker(target);
-    proxy = new (<any>window).Proxy(target, proxyHandler);
-  } else {
-    throw new TypeError('Given value is not referencable');
+class StateLog {
+  public idCount: number;
+  private stateLogContainer: Tracker[];
+
+  constructor() {
+    this.idCount = 0;
   }
 
-  return proxy;
+  public create(target: any) {
+    let proxyHandler;
+    let proxy;
+    const id: number = this.incrementIdCount();
+    if (Array.isArray(target)) {
+      proxyHandler =  new ArrayTracker(target, id);
+      proxy = new (<any>window).Proxy(target, proxyHandler);
+    } else if (typeof target === 'object' && target !== null) {
+      proxyHandler =  new ObjectTracker(target, id);
+      proxy = new (<any>window).Proxy(target, proxyHandler);
+    } else {
+      proxy = target;
+    }
+
+    return proxy;
+  }
+
+  public incrementIdCount() {
+    this.idCount += 1;
+    return this.idCount;
+  }
 }
 
+const stateLog = new StateLog();
 export default stateLog;
 
 (<any>window).stateLog = stateLog;

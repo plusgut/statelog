@@ -5,6 +5,8 @@ const TO   = 3;
 
 describe('Test array functionality', () => {
   beforeEach(() => {
+    stateLog.idCount = 0; // Resets the id Count, for better testing
+
     this.createSpyFirst   = jasmine.createSpy("createFirst");
     this.createSpySecond  = jasmine.createSpy("createSecond");
     this.updateSpyFirst   = jasmine.createSpy("updateFirst");
@@ -12,7 +14,7 @@ describe('Test array functionality', () => {
     this.deleteSpyFirst   = jasmine.createSpy("deleteFirst");
     this.deleteSpySecond  = jasmine.createSpy("deleteSecond");
 
-    this.stateLogObj = stateLog(generateValues(FROM, TO));
+    this.stateLogObj = stateLog.create(generateValues(FROM, TO));
     this.stateLogObj.__stateLog__.on('create', this.createSpyFirst);
     this.stateLogObj.__stateLog__.on('create', this.createSpySecond);
     this.stateLogObj.__stateLog__.on('update',  this.updateSpyFirst);
@@ -99,8 +101,8 @@ describe('Test array functionality', () => {
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 1], [TO + 1]);
-    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 2], jasmine.any);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [TO + 1]);
+    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 3], jasmine.any);
 
     this.stateLogObj.push("bar");
     this.checkEvents({
@@ -108,7 +110,7 @@ describe('Test array functionality', () => {
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [TO + 2]);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 3], [TO + 2]);
   });
 
   it("insert event gets called at unshift", () => {
@@ -118,8 +120,8 @@ describe('Test array functionality', () => {
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 1], [0]);
-    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 2], jasmine.any);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [0]);
+    expect(this.createSpyFirst).not.toHaveBeenCalledWith([TO + 3], jasmine.any);
 
     this.stateLogObj.unshift("bar");
     this.checkEvents({
@@ -127,7 +129,7 @@ describe('Test array functionality', () => {
       update: 0,
       delete: 0,
     });
-    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 2], [0]);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([TO + 3], [0]);
   });
 
 
@@ -141,8 +143,8 @@ describe('Test array functionality', () => {
       delete: 1,
     });
 
-    expect(this.createSpyFirst).toHaveBeenCalledWith([4, 5], [1, 2]);
-    expect(this.deleteSpyFirst).toHaveBeenCalledWith([1, 2], [1, 2]);
+    expect(this.createSpyFirst).toHaveBeenCalledWith([5, 6], [1, 2]);
+    expect(this.deleteSpyFirst).toHaveBeenCalledWith([3, 4], [1, 2]);
 
   });
 });

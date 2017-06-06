@@ -4,8 +4,10 @@ type Callback = () => void;
 
 abstract class Tracker {
   public eventHandler: EventHandler;
+  private stateLogId: number;
 
-  constructor() {
+  constructor(id: number) {
+    this.stateLogId = id;
     this.eventHandler = new EventHandler();
   }
 
