@@ -1,4 +1,4 @@
-/* globals module */
+/* globals module, process */
 
 // Karma configuration
 // Generated on Fri May 13 2016 20:43:12 GMT+0200 (CEST)
@@ -55,9 +55,10 @@ module.exports = function (config) {
     customLaunchers: {
       Chrome_Headless: {
         base: 'Chromium',
-        flags: ['--disable-gpu','--headless ', '--remote-debugging-port=9222']
+        flags: ['--disable-gpu', '--headless ', '--remote-debugging-port=9222']
       }
     },
+
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false,
