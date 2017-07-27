@@ -27,12 +27,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/plusgut/statelog.git"
+    "url": "git+https://github.com/plusnew/statelog.git"
   },
   "author": "Carlo Jeske",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/plusgut/statelog/issues"
+    "url": "https://github.com/plusnew/statelog/issues"
   },
-  "homepage": "https://github.com/plusgut/statelog#readme"
+  "homepage": "https://github.com/plusnew/statelog#readme"
 }
