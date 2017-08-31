@@ -1,8 +1,6 @@
-type Callback = (type: string) => void;
-
-import stateLog from './stateLog';
 import EventHandler from './EventHandler';
 import Tracker from './Tracker';
+import stateLog from './stateLog';
 
 class ObjectTracker extends Tracker{
   private target: any;
@@ -14,13 +12,13 @@ class ObjectTracker extends Tracker{
     this.stateLogContainer = {};
   }
 
-  private get(target: any, index: string, proxy: any) {
+  public get(target: any, index: string) {
     if (index === '__stateLog__') {
       return this;
     } else if (this.stateLogContainer.hasOwnProperty(index)) {
       return this.stateLogContainer[index];
     } else {
-      const result = this.target[index];
+      const result = target[index];
       if (typeof result === 'object' && result !== null && !result.__stateLog__) {
         this.stateLogContainer[index] = stateLog.create(result);
         return this.stateLogContainer[index];
@@ -30,7 +28,7 @@ class ObjectTracker extends Tracker{
     }
   }
 
-  private set(target: any, index: string, value: any) {
+  public set(target: any, index: string, value: any) {
     if (this.target[index] !== value) {
       this.target[index] = value;
       if (this.stateLogContainer.hasOwnProperty(index)) {

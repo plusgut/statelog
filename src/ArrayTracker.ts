@@ -1,7 +1,6 @@
-type Callback = (type: string, changedIds: number[], changedIndexes: number[]) => void;
+import Tracker from './Tracker';
 
 import stateLog from './stateLog';
-import Tracker from './Tracker';
 
 class ArrayTracker extends Tracker{
   private target: any;
@@ -17,7 +16,7 @@ class ArrayTracker extends Tracker{
     });
   }
 
-  private get(target: any, property: string, proxy: any) {
+  public get(target: any, property: string) {
     switch (property) {
       case 'push': 
         return this.push.bind(this);
@@ -28,17 +27,17 @@ class ArrayTracker extends Tracker{
       case '__stateLog__':
         return this;
       default:
-        if (this.target.hasOwnProperty(property)) {
-          return this.target[property];
+        if (target.hasOwnProperty(property)) {
+          return target[property];
         } else {
-          return this.target[property];
+          return target[property];
         }
     }
   }
 
-  private set() {
-    throw new Error('Setting values is not yet possible');
-  }
+  // private set() {
+  //   throw new Error('Setting values is not yet possible');
+  // }
 
   private push(...entities: any[]) {
     const changedIds     = [];
@@ -105,9 +104,9 @@ class ArrayTracker extends Tracker{
     return result;
   }
 
-  private pop() {
+  // private pop() {
 
-  }
+  // }
 
   // public getStateLogByIndex(index: string): StateLog {
     
